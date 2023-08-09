@@ -3,9 +3,9 @@ import tkinter.ttk as ttk
 
 __version__ = (0,1,0)
 
+running = True
 
 configWindow = tkinter.Tk()
-configWindow.protocol("WM_DELETE_WINDOW", configWindow.quit)
 chatWindow = tkinter.Tk()
 configWindow.focus_force()
 
@@ -25,6 +25,11 @@ def showGeometries():
     print("config Window " + configWindow.geometry())
     print("chat Window   " + chatWindow.geometry())
 
+def stopMainLoop():
+    global running
+    print("Shutdown")
+    running = False
+
 configWindow.title(f"Superchat Reader v{__version__[0]}.{__version__[1]}")
 configWindow.wm_grid(widthInc=400,heightInc=40)
 
@@ -40,7 +45,7 @@ menuFile.add_command(label="Save...")
 menuFile.add_command(label="Save with images...")
 menuFile.add_separator()
 menuFile.add_command(label="Print Geometries", command=showGeometries)
-menuFile.add_command(label="Quit", command=configWindow.quit)
+menuFile.add_command(label="Quit", command=stopMainLoop)
 
 
 menuView = tkinter.Menu(master=menuMain, tearoff=0)
@@ -77,12 +82,28 @@ ttk.Button(master=frameStreams, text="Refresh Videos").pack()
 ##################
 ## Chat Window Setup
 chatWindow.title("Messages")
-chatWindow.protocol("WM_DELETE_WINDOW", toggleChatWindow)
 ttk.Label(master=chatWindow,text="Message 1").pack()
 ttk.Label(master=chatWindow,text="Message 2").pack()
 ttk.Label(master=chatWindow,text="Message 3").pack()
 ttk.Label(master=chatWindow,text="Message 4").pack()
-chatWindow.geometry(f"600x400")
+
+def updateWindows():
+    try:
+        configWindow.update_idletasks()
+        configWindow.update()
+        chatWindow.update_idletasks()
+        chatWindow.update()
+    except:
+        print("Failed to update windows (this is normal while quitting the program)")
+
+configWindow.protocol("WM_DELETE_WINDOW", stopMainLoop)
+chatWindow.protocol("WM_DELETE_WINDOW", toggleChatWindow)
+
+updateWindows()
+chatWindow.geometry(f"600x400+{configWindow.winfo_x() + configWindow.winfo_width() + 20}+{configWindow.winfo_y()}")
 showGeometries()
 
-tkinter.mainloop()
+while running:
+    updateWindows()
+
+configWindow.quit()
