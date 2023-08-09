@@ -1,9 +1,20 @@
 import tkinter
 import tkinter.ttk as ttk
+import logging
 
 __version__ = (0,1,0)
 
 running = True
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+consoleHandler = logging.StreamHandler()
+consoleHandler.setLevel(logging.DEBUG)
+consoleHandler.setFormatter(logging.Formatter(
+    fmt="%(asctime)s.%(msecs)03d [%(levelname)8s] %(message)s",
+    datefmt="%m/%d %H:%M:%S")
+)
+logger.addHandler(consoleHandler)
 
 configWindow = tkinter.Tk()
 chatWindow = tkinter.Tk()
@@ -19,15 +30,16 @@ def toggleChatWindow ():
         chatWindow.deiconify()
         configWindow.focus_force()
         chatWindowShown = True
-    print(chatWindow.state())
+    logger.debug(chatWindow.state())
 
 def showGeometries():
-    print("config Window " + configWindow.geometry())
-    print("chat Window   " + chatWindow.geometry())
+    logger.info("config Window " + configWindow.geometry())
+    logger.info("chat Window   " + chatWindow.geometry())
 
 def stopMainLoop():
+    global logger
     global running
-    print("Shutdown")
+    logger.info("Shutdown")
     running = False
 
 configWindow.title(f"Superchat Reader v{__version__[0]}.{__version__[1]}")
@@ -94,7 +106,7 @@ def updateWindows():
         chatWindow.update_idletasks()
         chatWindow.update()
     except:
-        print("Failed to update windows (this is normal while quitting the program)")
+        logger.warning("Failed to update windows (this is normal while quitting the program)")
 
 configWindow.protocol("WM_DELETE_WINDOW", stopMainLoop)
 chatWindow.protocol("WM_DELETE_WINDOW", toggleChatWindow)
@@ -102,6 +114,8 @@ chatWindow.protocol("WM_DELETE_WINDOW", toggleChatWindow)
 updateWindows()
 chatWindow.geometry(f"600x400+{configWindow.winfo_x() + configWindow.winfo_width() + 20}+{configWindow.winfo_y()}")
 showGeometries()
+
+logger.info("Starting main loop")
 
 while running:
     updateWindows()
