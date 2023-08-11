@@ -19,7 +19,6 @@ logger.addHandler(consoleHandler)
 configWindow = tkinter.Tk()
 configWindow.focus_force()
 
-
 chatWindowShown = False
 def toggleChatWindow():
     global chatWindowShown
@@ -74,7 +73,7 @@ menuFile.add_command(label="Open...")
 menuFile.add_command(label="Save...")
 menuFile.add_command(label="Save with images...")
 menuFile.add_separator()
-#menuFile.add_command(label="Print Geometries", command=showGeometries)
+menuFile.add_command(label="Print Geometries", command=showGeometries)
 #menuFile.add_command(label="Quit", command=stopMainLoop)
 
 
@@ -123,8 +122,8 @@ def startChatWindow():
     #ttk.Label(master=chatWindow,text="Message 2").pack()
     #ttk.Label(master=chatWindow,text="Message 3").pack()
     #ttk.Label(master=chatWindow,text="Message 4").pack()
+    chatWindow.protocol("WM_DELETE_WINDOW", toggleChatWindow, menuView.invoke(0))
     chatWindow.geometry(f"600x400+{configWindow.winfo_x() + configWindow.winfo_width() + 20}+{configWindow.winfo_y()}")
-    showGeometries()
 
 def updateWindows():
     try:
@@ -136,7 +135,7 @@ def updateWindows():
         logger.warning("Failed to update windows (this is normal while quitting the program)")
 
 #configWindow.protocol("WM_DELETE_WINDOW", stopMainLoop)
-#chatWindow.protocol("WM_DELETE_WINDOW", toggleChatWindow)
+
 
 #updateWindows()
 
