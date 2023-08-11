@@ -17,16 +17,17 @@ consoleHandler.setFormatter(logging.Formatter(
 logger.addHandler(consoleHandler)
 
 configWindow = tkinter.Tk()
-chatWindow = tkinter.Tk()
 configWindow.focus_force()
 
-chatWindowShown = True
-def toggleChatWindow ():
+
+chatWindowShown = False
+def toggleChatWindow():
     global chatWindowShown
-    if chatWindow.state() == 'normal':
+    if chatWindowShown:
         chatWindow.withdraw()
         chatWindowShown = False
-    elif chatWindow.state() == 'withdrawn':
+    else:
+        startChatWindow()
         chatWindow.deiconify()
         configWindow.focus_force()
         chatWindowShown = True
@@ -36,11 +37,11 @@ def showGeometries():
     logger.info("config Window " + configWindow.geometry())
     logger.info("chat Window   " + chatWindow.geometry())
 
-def stopMainLoop():
+'''def stopMainLoop():
     global logger
     global running
     logger.info("Shutdown")
-    running = False
+    running = False'''
 
 
 def addChatMessage(master:tkinter.Widget=None, amount:str="$0.00", username:str="Unknown User", content=None):
@@ -73,8 +74,8 @@ menuFile.add_command(label="Open...")
 menuFile.add_command(label="Save...")
 menuFile.add_command(label="Save with images...")
 menuFile.add_separator()
-menuFile.add_command(label="Print Geometries", command=showGeometries)
-menuFile.add_command(label="Quit", command=stopMainLoop)
+#menuFile.add_command(label="Print Geometries", command=showGeometries)
+#menuFile.add_command(label="Quit", command=stopMainLoop)
 
 
 menuView = tkinter.Menu(master=menuMain, tearoff=0)
@@ -110,35 +111,39 @@ ttk.Button(master=frameStreams, text="Refresh Videos").pack()
 
 ##################
 ## Chat Window Setup
-chatWindow.title("Messages")
-addChatMessage(master=chatWindow, content="Message 1")
-addChatMessage(master=chatWindow, content="Message 2")
-addChatMessage(master=chatWindow, username="Very long username like damn bro calm down its too long", content="Message 3")
-addChatMessage(master=chatWindow, username="Long Post", content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor`n incididunt ut labore et dolore magna aliqua. Gravida dictum fusce ut placerat orci. Nunc consequat interdum varius sit amet. Placerat vestibulum lectus mauris ultrices eros in cursus. Viverra mauris in aliquam sem fringilla ut morbi tincidunt augue. Tempus quam pellentesque nec nam. Adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna. Platea dictumst vestibulum rhoncus est. Sit amet risus nullam eget felis eget. Tortor id aliquet lectus proin nibh nisl condimentum id. Vitae elementum curabitur vitae nunc sed velit dignissim. Tristique senectus et netus et. Velit laoreet id donec ultrices tincidunt arcu non. Commodo quis imperdiet massa tincidunt nunc pulvinar sapien et. Diam sollicitudin tempor id eu nisl.")
-#ttk.Label(master=chatWindow,text="Message 1").pack()
-#ttk.Label(master=chatWindow,text="Message 2").pack()
-#ttk.Label(master=chatWindow,text="Message 3").pack()
-#ttk.Label(master=chatWindow,text="Message 4").pack()
+def startChatWindow():
+    global chatWindow
+    chatWindow = tkinter.Toplevel(configWindow)
+    chatWindow.title("Messages")
+    addChatMessage(master=chatWindow, content="Message 1")
+    addChatMessage(master=chatWindow, content="Message 2")
+    addChatMessage(master=chatWindow, username="Very long username like damn bro calm down its too long", content="Message 3")
+    addChatMessage(master=chatWindow, username="Long Post", content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor`n incididunt ut labore et dolore magna aliqua. Gravida dictum fusce ut placerat orci. Nunc consequat interdum varius sit amet. Placerat vestibulum lectus mauris ultrices eros in cursus. Viverra mauris in aliquam sem fringilla ut morbi tincidunt augue. Tempus quam pellentesque nec nam. Adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna. Platea dictumst vestibulum rhoncus est. Sit amet risus nullam eget felis eget. Tortor id aliquet lectus proin nibh nisl condimentum id. Vitae elementum curabitur vitae nunc sed velit dignissim. Tristique senectus et netus et. Velit laoreet id donec ultrices tincidunt arcu non. Commodo quis imperdiet massa tincidunt nunc pulvinar sapien et. Diam sollicitudin tempor id eu nisl.")
+    #ttk.Label(master=chatWindow,text="Message 1").pack()
+    #ttk.Label(master=chatWindow,text="Message 2").pack()
+    #ttk.Label(master=chatWindow,text="Message 3").pack()
+    #ttk.Label(master=chatWindow,text="Message 4").pack()
+    chatWindow.geometry(f"600x400+{configWindow.winfo_x() + configWindow.winfo_width() + 20}+{configWindow.winfo_y()}")
+    showGeometries()
 
 def updateWindows():
     try:
         configWindow.update_idletasks()
         configWindow.update()
-        chatWindow.update_idletasks()
-        chatWindow.update()
+        #chatWindow.update_idletasks()
+        #chatWindow.update()
     except:
         logger.warning("Failed to update windows (this is normal while quitting the program)")
 
-configWindow.protocol("WM_DELETE_WINDOW", stopMainLoop)
-chatWindow.protocol("WM_DELETE_WINDOW", toggleChatWindow)
+#configWindow.protocol("WM_DELETE_WINDOW", stopMainLoop)
+#chatWindow.protocol("WM_DELETE_WINDOW", toggleChatWindow)
 
-updateWindows()
-chatWindow.geometry(f"600x400+{configWindow.winfo_x() + configWindow.winfo_width() + 20}+{configWindow.winfo_y()}")
-showGeometries()
+#updateWindows()
 
 logger.info("Starting main loop")
 
-while running:
-    updateWindows()
+#while running:
+#    updateWindows()
 
-configWindow.quit()
+#configWindow.quit()
+configWindow.mainloop()
