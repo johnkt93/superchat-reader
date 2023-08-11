@@ -42,6 +42,23 @@ def stopMainLoop():
     logger.info("Shutdown")
     running = False
 
+
+def addChatMessage(master:tkinter.Widget=None, amount:str="$0.00", username:str="Unknown User", content=None):
+    global styleBorderedFrame
+    frameMessage = ttk.Frame(master=master, height="2c")
+    frameData = ttk.Frame(master=frameMessage, width="4c")
+    labelUsername = ttk.Label(master=frameData, text=username, padding=4, wraplength="4c")
+    labelAmount = ttk.Label(master=frameData, text=amount, padding=4)
+    labelContent = ttk.Label(master=frameMessage, text=content, padding=4, wraplength="12c", borderwidth=1)
+
+    labelUsername.pack()
+    labelAmount.pack()
+    frameData.pack(anchor=tkinter.W, expand=False, side=tkinter.LEFT)
+    labelContent.pack(after=frameData, side=tkinter.RIGHT)
+
+    frameMessage.pack(expand=False, anchor=tkinter.W)
+
+
 configWindow.title(f"Superchat Reader v{__version__[0]}.{__version__[1]}")
 configWindow.wm_grid(widthInc=400,heightInc=40)
 
@@ -94,10 +111,14 @@ ttk.Button(master=frameStreams, text="Refresh Videos").pack()
 ##################
 ## Chat Window Setup
 chatWindow.title("Messages")
-ttk.Label(master=chatWindow,text="Message 1").pack()
-ttk.Label(master=chatWindow,text="Message 2").pack()
-ttk.Label(master=chatWindow,text="Message 3").pack()
-ttk.Label(master=chatWindow,text="Message 4").pack()
+addChatMessage(master=chatWindow, content="Message 1")
+addChatMessage(master=chatWindow, content="Message 2")
+addChatMessage(master=chatWindow, username="Very long username like damn bro calm down its too long", content="Message 3")
+addChatMessage(master=chatWindow, username="Long Post", content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor`n incididunt ut labore et dolore magna aliqua. Gravida dictum fusce ut placerat orci. Nunc consequat interdum varius sit amet. Placerat vestibulum lectus mauris ultrices eros in cursus. Viverra mauris in aliquam sem fringilla ut morbi tincidunt augue. Tempus quam pellentesque nec nam. Adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna. Platea dictumst vestibulum rhoncus est. Sit amet risus nullam eget felis eget. Tortor id aliquet lectus proin nibh nisl condimentum id. Vitae elementum curabitur vitae nunc sed velit dignissim. Tristique senectus et netus et. Velit laoreet id donec ultrices tincidunt arcu non. Commodo quis imperdiet massa tincidunt nunc pulvinar sapien et. Diam sollicitudin tempor id eu nisl.")
+#ttk.Label(master=chatWindow,text="Message 1").pack()
+#ttk.Label(master=chatWindow,text="Message 2").pack()
+#ttk.Label(master=chatWindow,text="Message 3").pack()
+#ttk.Label(master=chatWindow,text="Message 4").pack()
 
 def updateWindows():
     try:
