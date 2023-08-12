@@ -30,7 +30,9 @@ def toggleChatWindow():
         chatWindow.deiconify()
         configWindow.focus_force()
         chatWindowShown = True
-    logger.debug(chatWindow.state())
+    #menuView.entryconfig("Show Chat Messages", variable = tkinter.BooleanVar(value=chatWindowShown))
+    print(chatWindow.state())
+    print(chatWindowShown)
 
 def showGeometries():
     logger.info("config Window " + configWindow.geometry())
@@ -59,9 +61,6 @@ def addChatMessage(master:tkinter.Widget=None, amount:str="$0.00", username:str=
     frameMessage.pack(expand=False, anchor=tkinter.W)
 
 
-configWindow.title(f"Superchat Reader v{__version__[0]}.{__version__[1]}")
-configWindow.wm_grid(widthInc=400,heightInc=40)
-
 ##################
 ## Menu Bar Setup
 menuMain = tkinter.Menu(master=configWindow)
@@ -81,7 +80,7 @@ menuView = tkinter.Menu(master=menuMain, tearoff=0)
 # This doesn't work correctly, it doesn't check/uncheck based on the variable OR the window state
 menuView.add_checkbutton(label="Show Chat Messages", command=toggleChatWindow, variable=chatWindowShown)
 menuMain.add_cascade(label="View", menu=menuView)
-
+#chatWindow.protocol("WM_DELETE_WINDOW", menuView.invoke(0))
 menuConnect = tkinter.Menu(master=menuMain, tearoff=0)
 menuConnect.add_command(label="Add new account")
 menuConnect.add_command(label="Import messages from video")
@@ -113,7 +112,9 @@ ttk.Button(master=frameStreams, text="Refresh Videos").pack()
 def startChatWindow():
     global chatWindow
     chatWindow = tkinter.Toplevel(configWindow)
+    chatWindow.wm_transient(configWindow)
     chatWindow.title("Messages")
+
     addChatMessage(master=chatWindow, content="Message 1")
     addChatMessage(master=chatWindow, content="Message 2")
     addChatMessage(master=chatWindow, username="Very long username like damn bro calm down its too long", content="Message 3")
@@ -122,8 +123,12 @@ def startChatWindow():
     #ttk.Label(master=chatWindow,text="Message 2").pack()
     #ttk.Label(master=chatWindow,text="Message 3").pack()
     #ttk.Label(master=chatWindow,text="Message 4").pack()
-    chatWindow.protocol("WM_DELETE_WINDOW", toggleChatWindow, menuView.invoke(0))
     chatWindow.geometry(f"600x400+{configWindow.winfo_x() + configWindow.winfo_width() + 20}+{configWindow.winfo_y()}")
+    chatWindow.protocol("WM_DELETE_WINDOW", closeChatWindow)
+
+def closeChatWindow():
+    toggleChatWindow()
+    menuView.entryconfig("Show Chat Messages", variable=tkinter.BooleanVar(value=chatWindowShown))
 
 def updateWindows():
     try:
@@ -139,10 +144,16 @@ def updateWindows():
 
 #updateWindows()
 
-logger.info("Starting main loop")
+#logger.info("Starting main loop")
 
 #while running:
 #    updateWindows()
 
 #configWindow.quit()
-configWindow.mainloop()
+def main():
+    configWindow.title(f"Superchat Reader v{__version__[0]}.{__version__[1]}")
+    configWindow.wm_grid(widthInc=400,heightInc=40)
+    configWindow.mainloop()
+
+if __name__ == "__main__":
+    main()
